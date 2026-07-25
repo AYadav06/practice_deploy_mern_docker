@@ -24,6 +24,8 @@ jobs:
                 file:  ./Dockerfile
                 push: true
                 tags: ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
+                secrets: |
+                DATABASE_URL: ${{secrets.DATABASE_URL }}
 
             - name: Deploy to VM
               uses: appleboy/ssh-action@v1
