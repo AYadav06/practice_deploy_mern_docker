@@ -35,8 +35,7 @@ jobs:
                 key: ${{ secrets.VM_SSH_KEY }}
                 script: |
                  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
-                 export PATH="$HOME/.nvm/versions/node/v24.13.0/bin:$PATH"
                  docker stop prisma_deploy  || true
                  docker rm prisma_deploy  || true
-                 docker run --name prisma_deploy -d -p 8080:8080 -e DATABASE_URL=${{ secrets.DATABASE_URL }} ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
+                 docker run -d --name prisma_deploy -p 3000:3000 -e DATABASE_URL=${{ secrets.DATABASE_URL }} ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
                  docker image prune -f 
