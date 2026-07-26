@@ -18,14 +18,14 @@ jobs:
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
 
             - name: Build and push 
-              uses: docker/build-push-action@v4
+              uses: docker/build-push-action@v6
               with:
                 context: .
                 file:  ./Dockerfile
                 push: true
                 tags: ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
                 build-args: |
-                DATABASE_URL: ${{secrets.DATABASE_URL }}
+                  DATABASE_URL=${{ secrets.DATABASE_URL }}
 
             - name: Deploy to VM
               uses: appleboy/ssh-action@v1
@@ -34,6 +34,9 @@ jobs:
                 username: ${{ secrets.USER }}
                 key: ${{ secrets.VM_SSH_KEY }}
                 script: |
+                 docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
                  export PATH="$HOME/.nvm/versions/node/v24.13.0/bin:$PATH"
-                 docker stop prisma_deploy  
-                 docker run --name prisma_deploy -d -p 8080:8080 amityadav0612/test_deploy:${{ secrets.github.sha }}
+                 docker stop prisma_deploy  || true
+                 docker rm prisma_deploy  || true
+                 docker run --name prisma_deploy -d -p 8080:8080 -e DATABASE_URL=${{ secrets.DATABASE_URL }} ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
+                 docker image prune -f 
