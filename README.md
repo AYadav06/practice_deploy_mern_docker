@@ -1,7 +1,18 @@
-### Deploying a nodejs + prisma  backend in VM using docker 
-- Install docker
-Create a network - docker network create user_project
-Start postgres
-docker run --network user_project --name postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres
-Build the image - docker build --network=host -t user-project .
-Start the image - docker run -e DATABASE_URL=postgresql://postgres:mysecretpassword@postgres:5432/ - postgres --network user_project -p 3000:3000 user-project
+### Deploying a nodejs + prisma  backend in VM using docker and CD pipeline (github actions)
+  ## steps:
+- create a cd.yml file in .github/workflows 
+- write cd.yml
+- add environment variable like docker usename and dockerub access token in github secrets 
+- create a VM
+- add host ,usename and private key in the github secrets to ssh in vm and clone the project 
+- Write the docker file 
+- pass database url in docker build images as prisma 7 require the db url in generating client
+- test,build and run image locally 
+- RUN : 
+         `
+          docker build --build-arg DATABASE_URL="postgres://postgres:mypassword@localhost:5432/mydb" -t image_tag -e .             `
+- RUN :
+        ` docker run -p PORT:PORT -e DATABASE_URL="postgres://postgres:mypassword@localhost:5432/mydb image_name `
+- Now add the githubaction to deploy to a vm using appleboy githubactions 
+- In vm , manually install the docker
+- Manually pull the image from docker hub and run the image  
