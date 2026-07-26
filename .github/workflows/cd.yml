@@ -37,5 +37,11 @@ jobs:
                  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
                  docker stop prisma_deploy  || true
                  docker rm prisma_deploy  || true
-                 docker run -d --name prisma_deploy -p 3000:3000 -e DATABASE_URL=${{ secrets.DATABASE_URL }} ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
+                 echo "${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}"
+                 docker run -d \
+                    --name prisma_deploy \
+                    --restart unless-stopped \
+                    -p 3000:3000 \
+                    -e "DATABASE_URL=${{ secrets.DATABASE_URL }}" \
+                    "${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}"
                  docker image prune -f 
