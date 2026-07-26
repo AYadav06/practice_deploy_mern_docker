@@ -24,7 +24,7 @@ jobs:
                 file:  ./Dockerfile
                 push: true
                 tags: ${{ secrets.DOCKERHUB_USERNAME }}/prisma-deploy:${{ github.sha }}
-                secrets: |
+                build-args: |
                 DATABASE_URL: ${{secrets.DATABASE_URL }}
 
             - name: Deploy to VM
